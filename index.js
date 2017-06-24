@@ -110,14 +110,22 @@ let calculateTopN = (n, top, lineObj) => {
     if (top.length === 0) {
         return [lineObj];
     }
-    let breakPoint = 0;
-    for (let i = 0; i < top.length; i++) {
-        let rating = top[i].rating;
-        if (lineRating <= rating) {
-            breakPoint = i;
+    let breakPoint;
+    let start = 0, end = top.length, middle = parseInt((start + end) / 2, 10);
+    while (start < end) {
+        let middleRating = top[middle].rating;
+        if (lineRating > middleRating) {
+            start = middle + 1;
+            middle = parseInt((start + end) / 2, 10);
+        } else if (lineRating === middleRating) {
             break;
+        } else {
+            end = middle;
+            middle = parseInt((start + end) / 2, 10);
         }
     }
+    breakPoint = middle;
+
     const l = top.length;
     if (breakPoint > 0) { // Break at somewhere.
         for (let i = l; i > breakPoint; i--) {
